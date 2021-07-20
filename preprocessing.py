@@ -12,6 +12,7 @@ class Vocab:
 
     def fit(self, labels):
         self.token_index = {label: i for i, label in enumerate(set(labels))}
+        #その回の正解をlabelとして保存する
         self.index_token = {v: k for k, v in self.token_index.items()}
         return self
 
@@ -30,10 +31,7 @@ class Vocab:
 
     def save(self, file_path):
         with open(file_path, 'w') as f:
-            config = {
-                'token_index': self.token_index,
-                'index_token': self.index_token
-            }
+            config = {'token_index': self.token_index, 'index_token': self.index_token}
             f.write(json.dumps(config))
 
     @classmethod
@@ -45,16 +43,9 @@ class Vocab:
             vocab.index_token = config.index_token
         return vocab
 
-def convert_examples_to_features(x, y,
-                                 vocab,
-                                 max_seq_length,
-                                 tokenizer):
-    features = {
-        'input_ids': [],
-        'attention_mask': [],
-        'token_type_ids': [],
-        'label_ids': np.asarray(vocab.encode(y))
-    }
+def convert_examples_to_features(x, y, vocab, max_seq_length, tokenizer):
+    #実際の例から、特徴量に変換する
+    features = {'input_ids': [], 'attention_mask': [], 'token_type_ids': [], 'label_ids': np.asarray(vocab.encode(y))}
     for pairs in x:
         tokens = [tokenizer.cls_token]
         token_type_ids = []
